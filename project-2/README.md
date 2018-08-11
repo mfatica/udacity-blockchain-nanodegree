@@ -8,7 +8,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-Installing Node and NPM is pretty straightforward using the installer package available from the (Node.js® web site)[https://nodejs.org/en/].
+Installing Node and NPM is pretty straightforward using the installer package available from the [Node.js® web site](https://nodejs.org/en/).
 
 ### Configuring your project
 
@@ -20,34 +20,44 @@ npm install
 ## Testing
 
 To test code:
-1: Open a command prompt or shell terminal after install node.js.
-2: Enter a node session, also known as REPL (Read-Evaluate-Print-Loop).
+
+1: Open a command prompt or shell terminal after following instructions above.
+2: Run the code with `node ./simpleChain.js` to execute included testing code.
+
+Here is the test code for reference:
+
 ```
-node
-```
-3: Copy and paste your code into your node session
-4: Instantiate blockchain with blockchain variable
-```
-let blockchain = new Blockchain();
-```
-5: Generate 10 blocks using a for loop
-```
-for (var i = 0; i <= 10; i++) {
-  blockchain.addBlock(new Block("test data "+i));
-}
-```
-6: Validate blockchain
-```
-blockchain.validateChain();
-```
-7: Induce errors by changing block data
-```
-let inducedErrorBlocks = [2,4,7];
-for (var i = 0; i < inducedErrorBlocks.length; i++) {
-  blockchain.chain[inducedErrorBlocks[i]].data='induced chain error';
-}
-```
-8: Validate blockchain. The chain should now fail with blocks 2,4, and 7.
-```
-blockchain.validateChain();
+console.log('## testing..');
+
+const testInducedError = true;
+
+var blockchain = new Blockchain();
+
+(async () => {
+  var height = await blockchain.getBlockHeight();
+  
+  // if we don't have a chain in storage, start a new one and add some blocks
+  if (height < 0) {
+    console.log("## Initializing new chain with genesis block");
+    await blockchain.addBlock(new Block("First block in the chain - Genesis block"));
+
+    for(var i = 0; i < 3; i++) {
+      await blockchain.addBlock(new Block("test--" + i));
+    }
+  }
+
+  await blockchain.validateChain();
+
+  if(testInducedError) {
+    console.log('## testing induced error');
+    var block = await blockchain.getBlock(1);
+    block.data = "bad data";
+
+    // put directly, otherwise blockchain.addBlock will add this as a new block
+    await db.put(block.height, JSON.stringify(block));
+
+    console.log('## blockchain should now have an error at block 1:');
+    await blockchain.validateChain();
+  }
+})();
 ```
