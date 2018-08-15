@@ -29,13 +29,13 @@ The provided API is powered by [express.js](https://expressjs.com/), a fast, uno
 
 #### Endpoints
 
-    GET /chain
+    GET /blocks
         Returns a JSON array of all blocks in the chain
 
-    GET /block/:BLOCK_HEIGHT
+    GET /blocks/:BLOCK_HEIGHT
         Returns a block at a specific height
 
-    POST /block
+    POST /blocks
         Adds a new block to the chain
 
 #### Examples
@@ -64,13 +64,17 @@ POST response example
 
 #### Testing with CURL
 
-##### GET block
+##### GET blocks
 ```
-curl "http://localhost:8000/block/0"
+# Get all the blocks
+curl "http://localhost:8000/blocks"
+
+#Get a single block
+curl "http://localhost:8000/blocks/0"
 ```
 ##### POST block
 ```
-curl -X "POST" "http://localhost:8000/block" \
+curl -X "POST" "http://localhost:8000/blocks" \
      -H 'Content-Type: application/json' \
      -d $'{
   "body": "Testing block with test string data"
