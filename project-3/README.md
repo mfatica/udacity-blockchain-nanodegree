@@ -1,6 +1,6 @@
 # Simple Blockchain
 
-Blockchain has the potential to change the way that the world approaches data. This simple blockchain provides a RESTful API using express.js to get blocks and add new blocks.
+Blockchain has the potential to change the way that the world approaches data. This simple blockchain provides a RESTful API to get blocks and add new blocks.
 
 ## Getting Started
 
@@ -25,10 +25,18 @@ The site is now running on localhost:8000!
 
 ### API Documentation
 
+The provided API is powered by [express.js](https://expressjs.com/), a fast, unopinionated, minimalist web framework for Node.js.
+
 #### Endpoints
 
+    GET /chain
+        Returns a JSON array of all blocks in the chain
+
     GET /block/:BLOCK_HEIGHT
+        Returns a block at a specific height
+
     POST /block
+        Adds a new block to the chain
 
 #### Examples
 
