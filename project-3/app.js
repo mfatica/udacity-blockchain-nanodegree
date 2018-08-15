@@ -8,10 +8,6 @@ app.use(bodyParser.json());
 const { Blockchain, Block } = require('./Blockchain');
 const blockchain = new Blockchain();
 
-app.get('/', async (req, res) => {
-    res.send("hel");
-});
-
 app.get('/block/:BLOCK_HEIGHT', async (req, res) => {
     try {
         res.send(await blockchain.getBlock(req.params.BLOCK_HEIGHT));
