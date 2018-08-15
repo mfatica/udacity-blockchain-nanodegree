@@ -8,7 +8,23 @@ app.use(bodyParser.json());
 const { Blockchain, Block } = require('./Blockchain');
 const blockchain = new Blockchain();
 
-app.get('/block/:BLOCK_HEIGHT', async (req, res) => {
+app.get('/blocks', async (req, res) => {
+    try {
+        const height = await blockchain.getBlockHeight();
+        const blocks = [];
+    
+        for(let i = 0; i <= height; i++) {
+            blocks.push(await blockchain.getBlock(i));
+        }
+    
+        res.send(blocks);
+    } catch(error) {
+        console.log(error);
+        res.send("Unable to retrieve blockchain");
+    }
+});
+
+app.get('/blocks/:BLOCK_HEIGHT', async (req, res) => {
     try {
         res.send(await blockchain.getBlock(req.params.BLOCK_HEIGHT));
     } catch(error) {
@@ -17,7 +33,7 @@ app.get('/block/:BLOCK_HEIGHT', async (req, res) => {
     }
 });
 
-app.post('/block', async (req, res) => {
+app.post('/blocks', async (req, res) => {
     try {
         res.send(await blockchain.addBlock(new Block(req.body.body)));
     } catch(error) {
@@ -27,7 +43,7 @@ app.post('/block', async (req, res) => {
 });
 
 app.listen(8000, async () => {
-    var height = await blockchain.getBlockHeight();
+    const height = await blockchain.getBlockHeight();
     
     // if we don't have a chain in storage, start a new one and add some blocks
     if (height < 0) {
