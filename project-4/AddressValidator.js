@@ -62,6 +62,8 @@ function validateSignature(address, signature) {
 
     const { requestTimeStamp, expired, registered } = addressTimestampMap[address];
 
+    console.log(addressTimestampMap[address]);
+
     var message = `${address}:${requestTimeStamp}:${messageSuffix}`;
 
     var isValidSignature = bitcoinMessage.verify(message, address, signature);

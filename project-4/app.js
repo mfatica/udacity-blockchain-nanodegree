@@ -7,7 +7,9 @@ app.use(bodyParser.json());
 
 const { Blockchain, Block } = require('./Blockchain');
 const blockchain = new Blockchain();
+
 const { grantValidation, validateSignature } = require('./AddressValidator');
+const { stringToHex, hexToString } = require('./utilities'); 
 
 app.post('/requestValidation', async (req, res) => {
     try {
@@ -42,7 +44,7 @@ app.post('/block', async (req, res) => {
           star: {
               dec: req.body.star.dec,
               ra: req.body.star.ra,
-              story: req.body.star.story,
+              story: stringToHex(req.body.star.story.substring(0,500)),
               // optional
               cen: req.body.star.cen,
               mag: req.body.star.mag
@@ -72,7 +74,7 @@ app.get('/blocks', async (req, res) => {
         const blocks = [];
     
         for(let i = 0; i <= height; i++) {
-            blocks.push(await blockchain.getBlock(i));
+            blocks.push(await getBlock(i));
         }
     
         res.send(blocks);
@@ -84,7 +86,7 @@ app.get('/blocks', async (req, res) => {
 
 app.get('/block/:HEIGHT', async (req, res) => {
     try {
-        res.send(await blockchain.getBlock(req.params.HEIGHT));
+        res.send(await getBlock(req.params.HEIGHT));
     } catch(error) {
         console.log(error);
         res.send("No block found at height " + req.params.HEIGHT);
@@ -111,3 +113,17 @@ app.listen(8000, async () => {
 
     console.log("listening on port 8000");
 });
+
+async function getBlock(height) {
+    const block = await blockchain.getBlock(height);
+
+    if("star" in block.body
+        && "story" in block.body.star)
+        {
+            console.log(hexToString(block.body.star.story));
+            console.log((block.body.star.story));
+            block.body.star.story = hexToString(block.body.star.story);
+        }
+
+    return block;
+}

@@ -4,8 +4,6 @@
 
 const SHA256 = require('crypto-js/sha256');
 
-const { stringToHex, hexToString } = require('./utilities'); 
-
 /* ===== Persist data with LevelDB ===================================
 |  Learn more: level: https://github.com/Level/level     |
 |  =============================================================*/
@@ -38,17 +36,9 @@ module.exports.Blockchain = class Blockchain {
       newBlock.previousBlockHash = (await this.getBlock(height - 1)).hash;
     }
 
-    console.log("pre newBlock: " + JSON.stringify(newBlock));
-
-    if(("star" in newBlock.body)
-      && ("story" in newBlock.body.star))
-      {
-        newBlock.body.star.story = stringToHex(newBlock.body.star.story);//stringToHex(newBlock.body.star.story, maxStoryLength);
-      }
-
     // Block hash with SHA256 using newBlock and converting to a string
     newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
-      console.log("newBlock: " + JSON.stringify(newBlock.body));
+    
     // persist block in leveldb
     await db.put(newBlock.height, JSON.stringify(newBlock));
     return await this.getBlock(height);
@@ -64,14 +54,7 @@ module.exports.Blockchain = class Blockchain {
   }
 
   async getBlock(blockHeight) {
-    const block = JSON.parse(await db.get(blockHeight));
-    if(("star" in block.body)
-    && ("story" in block.body.star))
-      {
-        block.body.star.story = hexToString(block.body.star.story);
-      }
-      console.log(block);
-    return block;
+    return JSON.parse(await db.get(blockHeight));
   }
 
   async validateBlock(blockHeight) {
