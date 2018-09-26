@@ -128,7 +128,7 @@ async function getBlock(height) {
         {
             console.log(hexToString(block.body.star.story));
             console.log((block.body.star.story));
-            block.body.star.story = hexToString(block.body.star.story);
+            block.body.star.storyDecoded = hexToString(block.body.star.story);
         }
 
     return block;

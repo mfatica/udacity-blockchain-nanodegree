@@ -5,7 +5,7 @@
 const bitcoin = require('bitcoinjs-lib');
 const bitcoinMessage = require('bitcoinjs-message');
 
-const validationWindowMs = 300 * 1000;
+const validationWindowSeconds = 300;
 const messageSuffix = "starRegistry";
 
 const addressTimestampMap = {};
@@ -26,7 +26,7 @@ function grantValidation(address) {
             "address": address,
             "requestTimeStamp": requestTimeStamp,
             "message": `${address}:${requestTimeStamp}:${messageSuffix}`,
-            "validationWindow": 300             
+            "validationWindow": validationWindowSeconds             
         };
     }
 
@@ -41,16 +41,18 @@ function grantValidation(address) {
     (function(address) {
         setTimeout(function() {
             console.log("removing " + address);
-            if(!addressTimestampMap[address].validated) {
+            if(addressTimestampMap[address]
+                && !addressTimestampMap[address].validated) {
                 addressTimestampMap[address].expired = true;
             }
-        }, validationWindowMs);
+        }, validationWindowSeconds * 1000);
     })(address);
 
     return {
         "address": address,
         "requestTimeStamp": currentTimestamp,
-        "message": `${address}:${currentTimestamp}:${messageSuffix}`
+        "message": `${address}:${currentTimestamp}:${messageSuffix}`,
+        "validationWindow": validationWindowSeconds             
     };
 }
 
