@@ -1,6 +1,6 @@
-# Simple Blockchain
+# Star Notary chain
 
-Blockchain has the potential to change the way that the world approaches data. This simple blockchain provides a RESTful API to get blocks and add new blocks.
+Allows users to claim ownership of their favorite star in the night sky.
 
 ## Getting Started
 
