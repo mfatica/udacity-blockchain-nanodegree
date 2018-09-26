@@ -8,7 +8,7 @@ app.use(bodyParser.json());
 const { Blockchain, Block } = require('./Blockchain');
 const blockchain = new Blockchain();
 
-const { grantValidation, validateSignature } = require('./AddressValidator');
+const { grantValidation, validateSignature, canRegister, recordRegistration } = require('./AddressValidator');
 const { stringToHex, hexToString } = require('./utilities'); 
 
 app.post('/requestValidation', async (req, res) => {
@@ -39,6 +39,11 @@ app.post('/block', async (req, res) => {
                 return res.send("Invalid request! Body must include address and star information");
             }
 
+        if(!canRegister(req.body.address))
+        {
+            return res.send("You must validate before registering a star");
+        }
+
         const starBlock = {
           address: req.body.address,
           star: {
@@ -51,6 +56,7 @@ app.post('/block', async (req, res) => {
           }  
         };
 
+        recordRegistration(req.body.address);
         res.send(await blockchain.addBlock(new Block(starBlock)));
     } catch(error) {
         console.log(error);
@@ -60,12 +66,12 @@ app.post('/block', async (req, res) => {
 
 app.get('^/stars/:HASH(hash:([a-zA-Z0-9]+)$)', async (req, res) => {
     var hash = req.params[0];
-    res.send(hash);
+    res.send(await blockchain.getBlockByHash(hash));
 });
 
 app.get('^/stars/:ADDRESS(address:([a-zA-Z0-9]+)$)', async (req, res) => {
     var address = req.params[0];
-    res.send(address);
+    res.send(await blockchain.getBlocksForAddress(address));
 });
 
 app.get('/blocks', async (req, res) => {

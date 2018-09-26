@@ -109,6 +109,31 @@ module.exports.Blockchain = class Blockchain {
       console.log('No errors detected');
     }
   }
+
+  // poor implementation
+  async getBlocksForAddress(address){
+    const blocks = [];
+    const height = await this.getBlockHeight();
+    for (let i = 0; i <= height; i++) {
+      const block = (await this.getBlock(i));
+      if(block.body.address === address) {
+        blocks.push(block);
+      }
+    }
+    return blocks;
+  }
+
+  // poor implementation
+  async getBlockByHash(hash){
+    const height = await this.getBlockHeight();
+    for (let i = 0; i <= height; i++) {
+      let block = (await this.getBlock(i));
+      if(block.hash === hash) {
+        return block;
+      }
+    }
+    return undefined;
+  }
 }
 
 

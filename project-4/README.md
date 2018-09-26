@@ -35,8 +35,20 @@ The provided API is powered by [express.js](https://expressjs.com/), a fast, uno
     GET /blocks/:BLOCK_HEIGHT
         Returns a block at a specific height
 
-    POST /blocks
+    POST /block
         Adds a new block to the chain
+
+    POST /requestValidation
+        This signature proves the users blockchain identity. Upon validation of this identity, the user should be granted access to register a single star.
+
+    POST /message-signature/validate
+        After receiving the response, users will prove their blockchain identity by signing a message with their wallet. Once they sign this message, the application will validate their request and grant access to register a star.
+
+    GET /stars/address:[ADDRESS]
+        Get star block(s) by wallet address 
+
+    GET /stars/hash:[HASH]
+        Get star block by hash
 
 #### Examples
 
@@ -49,18 +61,20 @@ GET response example
     ETag: W/"dc-tUgBeS30uDNl3wc12Ei3lohPczw"
     Date: Wed, 15 Aug 2018 00:10:30 GMT
     Connection: keep-alive
-    {"hash":"49cce61ec3e6ae664514d5fa5722d86069cf981318fc303750ce66032d0acff3","height":0,"body":"First block in the chain - Genesis block","time":"1530311457","previousBlockHash":""
-
-POST response example 
-
-    HTTP/1.1 200 OK
-    X-Powered-By: Express
-    Content-Type: application/json; charset=utf-8
-    Content-Length: 220
-    ETag: W/"dc-AdIojIo3GPDA2jFxULURNxFkPUg"
-    Date: Wed, 15 Aug 2018 00:12:26 GMT
-    Connection: keep-alive
-    {"hash":"46e4939c6312b7108a70035f6fca4304fbb88132dd11daafd417407e41cd62e2","height":3,"body":"Testing w/ curl 3","time":"1534291946", previousBlockHash":"93f995ca7b0670ad5592ce598722176dc156f1065d99b70b7aa45db072ad7b9b"}
+    {
+        "hash": "a59e9e399bc17c2db32a7a87379a8012f2c8e08dd661d7c0a6a4845d4f3ffb9f",
+        "height": 1,
+        "body": {
+            "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
+            "star": {
+            "ra": "16h 29m 1.0s",
+            "dec": "-26° 29' 24.9",
+            "story": "466f756e642073746172207573696e672068747470733a2f2f7777772e676f6f676c652e636f6d2f736b792f"
+            }
+        },
+        "time": "1532296234",
+        "previousBlockHash": "49cce61ec3e6ae664514d5fa5722d86069cf981318fc303750ce66032d0acff3"
+    }
 
 #### Testing with CURL
 
@@ -74,9 +88,52 @@ curl "http://localhost:8000/blocks/0"
 ```
 ##### POST block
 ```
-curl -X "POST" "http://localhost:8000/blocks" \
-     -H 'Content-Type: application/json' \
+curl -X "POST" "http://localhost:8000/block" \
+     -H 'Content-Type: application/json; charset=utf-8' \
      -d $'{
-  "body": "Testing block with test string data"
+  "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
+  "star": {
+    "dec": "-26° 29'\'' 24.9",
+    "ra": "16h 29m 1.0s",
+    "story": "Found star using https://www.google.com/sky/"
+  }
 }'
+```
+##### Validation
+First request timestamp for validation
+```
+curl -X "POST" "http://localhost:8000/requestValidation" \
+     -H 'Content-Type: application/json; charset=utf-8' \
+     -d $'{
+  "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ"
+}'
+
+# Response
+{
+  "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
+  "requestTimeStamp": "1532296090",
+  "message": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ:1532296090:starRegistry",
+  "validationWindow": 300
+}
+```
+Then submit a request with the signed message
+```
+curl -X "POST" "http://localhost:8000/message-signature/validate" \
+     -H 'Content-Type: application/json; charset=utf-8' \
+     -d $'{
+  "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
+  "signature": "H6ZrGrF0Y4rMGBMRT2+hHWGbThTIyhBS0dNKQRov9Yg6GgXcHxtO9GJN4nwD2yNXpnXHTWU9i+qdw5vpsooryLU="
+}'
+
+# Response
+{
+  "registerStar": true,
+  "status": {
+    "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
+    "requestTimeStamp": "1532296090",
+    "message": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ:1532296090:starRegistry",
+    "validationWindow": 193,
+    "messageSignature": "valid"
+  }
+}
 ```

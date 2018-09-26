@@ -25,7 +25,8 @@ function grantValidation(address) {
         return {
             "address": address,
             "requestTimeStamp": requestTimeStamp,
-            "message": `${address}:${requestTimeStamp}:${messageSuffix}`            
+            "message": `${address}:${requestTimeStamp}:${messageSuffix}`,
+            "validationWindow": 300             
         };
     }
 
@@ -60,7 +61,7 @@ function validateSignature(address, signature) {
         };
     }
 
-    const { requestTimeStamp, expired, registered } = addressTimestampMap[address];
+    const { requestTimeStamp, expired } = addressTimestampMap[address];
 
     console.log(addressTimestampMap[address]);
 
@@ -73,7 +74,7 @@ function validateSignature(address, signature) {
     }
 
     return {
-        "registerStar": !expired && isValidSignature && !registered,
+        "registerStar": !expired && isValidSignature,
         "status": {
           "address": address,
           "requestTimeStamp": requestTimeStamp,
@@ -88,15 +89,15 @@ function canRegister(address) {
     if(!addressTimestampMap[address])
         return false;
 
-    const { validated, expired, registered } = addressTimestampMap[address];
-    return !expired && validated && !registered;
+    const { validated, expired } = addressTimestampMap[address];
+    return !expired && validated;
 }
 
 function recordRegistration(address) {
     if(!addressTimestampMap[address])
         return;
 
-    addressTimestampMap[address].registered = true;
+    delete addressTimestampMap[address];
 }
 
 module.exports = {
