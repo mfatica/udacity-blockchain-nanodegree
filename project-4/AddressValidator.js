@@ -26,7 +26,7 @@ function grantValidation(address) {
             "address": address,
             "requestTimeStamp": requestTimeStamp,
             "message": `${address}:${requestTimeStamp}:${messageSuffix}`,
-            "validationWindow": validationWindowSeconds             
+            "validationWindow": 300 - (getTimestamp() - requestTimeStamp)
         };
     }
 
@@ -43,7 +43,7 @@ function grantValidation(address) {
             console.log("removing " + address);
             if(addressTimestampMap[address]
                 && !addressTimestampMap[address].validated) {
-                addressTimestampMap[address].expired = true;
+                delete addressTimestampMap[address];
             }
         }, validationWindowSeconds * 1000);
     })(address);
@@ -82,7 +82,7 @@ function validateSignature(address, signature) {
           "requestTimeStamp": requestTimeStamp,
           "message": message,
           "validationWindow": getTimestamp() - requestTimeStamp,
-          "messageSignature": (!expired && isValidSignature) ? "valid" : "invalid"
+          "messageSignature": (isValidSignature) ? "valid" : "invalid"
         }
     };
 }

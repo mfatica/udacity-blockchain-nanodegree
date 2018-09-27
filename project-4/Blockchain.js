@@ -19,6 +19,8 @@ const db = level(chainDB);
 const Block = require('./Block');
 module.exports.Block = Block;
 
+const {  hexToString } = require('./utilities'); 
+
 module.exports.Blockchain = class Blockchain {
   constructor() { }
 
@@ -54,11 +56,28 @@ module.exports.Blockchain = class Blockchain {
   }
 
   async getBlock(blockHeight) {
-    return JSON.parse(await db.get(blockHeight));
+    const block = JSON.parse(await db.get(blockHeight));
+    
+    if("star" in block.body
+        && "story" in block.body.star)
+        {
+            block.body.star.storyDecoded = hexToString(block.body.star.story);
+        }
+
+    return block;
   }
 
   async validateBlock(blockHeight) {
-    const block = await this.getBlock(blockHeight);
+    // run through stringify/parse to clone the object
+    const block = JSON.parse(JSON.stringify(await this.getBlock(blockHeight)));
+
+    // remove the decoded message
+    if("star" in block.body
+        && "storyDecoded" in block.body.star)
+        {
+          delete block.body.star.storyDecoded;
+        }
+
     const blockHash = block.hash;
     const validBlockHash = getValidBlockHash(block);
 

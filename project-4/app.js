@@ -9,7 +9,7 @@ const { Blockchain, Block } = require('./Blockchain');
 const blockchain = new Blockchain();
 
 const { grantValidation, validateSignature, canRegister, recordRegistration } = require('./AddressValidator');
-const { stringToHex, hexToString } = require('./utilities'); 
+const { stringToHex } = require('./utilities'); 
 
 app.post('/requestValidation', async (req, res) => {
     try {
@@ -110,7 +110,7 @@ app.listen(8000, async () => {
         "star": {
           "dec": "-26° 29'\'' 24.9",
           "ra": "16h 29m 1.0s",
-          "story": "Found star using https://www.google.com/sky/"
+          "story": stringToHex("Found star using https://www.google.com/sky/")
         }
       }));
     }
@@ -122,14 +122,5 @@ app.listen(8000, async () => {
 
 async function getBlock(height) {
     const block = await blockchain.getBlock(height);
-
-    if("star" in block.body
-        && "story" in block.body.star)
-        {
-            console.log(hexToString(block.body.star.story));
-            console.log((block.body.star.story));
-            block.body.star.storyDecoded = hexToString(block.body.star.story);
-        }
-
     return block;
 }
