@@ -70,7 +70,7 @@ module.exports.Blockchain = class Blockchain {
   async validateBlock(blockHeight) {
     // run through stringify/parse to clone the object
     const block = JSON.parse(JSON.stringify(await this.getBlock(blockHeight)));
-
+    console.log(block);
     // remove the decoded message
     if("star" in block.body
         && "storyDecoded" in block.body.star)
@@ -78,6 +78,7 @@ module.exports.Blockchain = class Blockchain {
           delete block.body.star.storyDecoded;
         }
 
+        console.log("###", block);
     const blockHash = block.hash;
     const validBlockHash = getValidBlockHash(block);
 
@@ -91,6 +92,11 @@ module.exports.Blockchain = class Blockchain {
     if (blockHeight === 0) return true;
 
     const previousBlock = await this.getBlock(blockHeight - 1);
+    if("star" in previousBlock.body
+        && "storyDecoded" in previousBlock.body.star)
+        {
+          delete previousBlock.body.star.storyDecoded;
+        }
     const previousBlockHash = block.previousBlockHash;
     const validPreviousBlockHash = getValidBlockHash(previousBlock);
 
