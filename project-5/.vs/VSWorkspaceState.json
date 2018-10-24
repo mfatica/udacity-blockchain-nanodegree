@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\smart_contracts",
+    "\\smart_contracts\\build",
+    "\\smart_contracts\\build\\contracts",
+    "\\smart_contracts\\contracts",
+    "\\smart_contracts\\test"
+  ],
+  "SelectedNode": "\\smart_contracts\\contracts\\StarNotary.sol",
+  "PreviewInSolutionExplorer": false
+}
