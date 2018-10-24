@@ -65,8 +65,8 @@ contract('StarNotary', accounts => {
     })
 
     describe('buying and selling stars', () => {
-        let user1 = accounts[1]
-        let user2 = accounts[2]
+        let user1 = accounts[0]
+        let user2 = accounts[1]
         let randomMaliciousUser = accounts[3]
 
         let starId = 1
