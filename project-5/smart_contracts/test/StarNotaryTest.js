@@ -169,17 +169,17 @@ contract('StarNotary', accounts => {
         })
 
         it('user can\'t transfer someone else\'s star', async function () {
-            await this.contract.createStar(
-                starInput.name,
-                starInput.story,
-                starInput.dec,
-                starInput.mag,
-                starInput.cent,
-                3,
-                { from: user3 })
-
             try {
-                await this.contract.approve(user1, 1);
+                await this.contract.createStar(
+                    starInput.name,
+                    starInput.story,
+                    starInput.dec,
+                    starInput.mag,
+                    starInput.cent,
+                    3,
+                    { from: user3 })
+
+                await this.contract.approve(user2, 2);
             }
             catch (e) {
                 assert.isTrue(e.message.includes("revert"));

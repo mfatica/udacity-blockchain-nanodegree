@@ -541,15 +541,6 @@
             document.getElementById('star-cent').innerText = result[4]
         }
 
-        // Get and display star owner
-        starNotary.starOwner(function (error, result) {
-            if (!error) {
-                document.getElementById('star-owner').innerText = result
-            } else {
-                console.log(error);
-            }
-        });
-
         function lookupButtonClicked() {
             let tokenId = parseInt(document.getElementById('star-lookup').value);
             starNotary.tokenIdToStarInfo.call(tokenId, function (error, result) {
